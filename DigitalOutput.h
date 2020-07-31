@@ -5,30 +5,37 @@
 #define ATMEGA328P
 #pragma once
 
+#include "GPIO.h"
+
 //MACROS
 #define DDR_OF_(PORT_PTR) (*(PORT_PTR-1))
 #define PIN_OF_(PORT_PTR) (*(PORT_PTR-2))
 #define PORT_OF_(PORT_PTR) (*(PORT_PTR))
 
-enum gpio_mode_t{
-    OUTPUT,
-    INPUT,
-    INPUT_WITH_PULLUP
+enum output_mode_t{
+    OUTPUT_START_LOW,
+	OUTPUT_START_HIGH,
 };
 
-class GPIO
+class DigitalOutput
 {
     private:
-        volatile unsigned char *_port;
-        const unsigned char _bitmask;
+		GPIO gpio;
 
         /* data */
     public:
-        GPIO(volatile unsigned char *gpio_port, const unsigned char port_bit) : _port(gpio_port), _bitmask(1<<port_bit) { }
-        GPIO(volatile unsigned char *gpio_port, const unsigned char port_bit, gpio_mode_t mode) : _port(gpio_port), _bitmask(1<<port_bit) { setMode(mode); }
+        DigitalOutput(volatile unsigned char *gpio_port, unsigned char port_bit) { gpio.initialize(gpio_port,port_bit); }
+        DigitalOutput(volatile unsigned char *gpio_port, unsigned char port_bit, output_mode_t mode) { 
+			gpio.initialize(gpio_port,port_bit);
+			setMode(mode); }
                
-        void setMode(gpio_mode_t mode);
-
+        void setMode(output_mode_t mode);
+		void setLow();
+		void setHigh();
+		bool isLow();
+		bool isHigh();
+		bool isOff();
+		bool isOn();
         void writeHigh();
         void writeLow();
         void write(bool pin_level);

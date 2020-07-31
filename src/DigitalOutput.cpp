@@ -3,6 +3,12 @@
 
 #include "../DigitalOutput.h"
 
+void DigitalOutput::setMode(output_mode_t mode){
+	if(mode == OUTPUT_START_HIGH){
+		
+	}
+}
+
 void DigitalOutput::setHigh(){
     gpio.writeHigh();
 }
