@@ -20,15 +20,16 @@ class GPIO
 {
     private:
         volatile unsigned char *_port;
-        const unsigned char _bitmask;
+        unsigned char _bitmask;
 
         /* data */
     public:
+		GPIO();
         GPIO(volatile unsigned char *gpio_port, const unsigned char port_bit) : _port(gpio_port), _bitmask(1<<port_bit) { }
-        GPIO(volatile unsigned char *gpio_port, const unsigned char port_bit, gpio_mode_t mode) : _port(gpio_port), _bitmask(1<<port_bit) { setMode(mode); }
-               
+        GPIO(volatile unsigned char *gpio_port, const unsigned char port_bit, gpio_mode_t mode) { setMode(mode); }
+        
+		void initialize(volatile unsigned char *gpio_port, const unsigned char port_bit);
         void setMode(gpio_mode_t mode);
-
         void writeHigh();
         void writeLow();
         void write(bool pin_level);

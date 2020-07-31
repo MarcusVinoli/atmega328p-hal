@@ -42,3 +42,9 @@ unsigned char  GPIO::getPortRegisterValue(){
 unsigned char  GPIO::getDataDirectionRegisterValeu(){
     return(DDR_OF_(_port));
 }
+
+void GPIO::initialize(volatile unsigned char *gpio_port, unsigned char port_bit){
+	_port = gpio_port;
+	_bitmask = (1<<port_bit);
+	
+}
