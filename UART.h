@@ -52,7 +52,7 @@ public:
         initialization();
     }
     void initialization();
-    void setBaudrate(long baudrate);
+    void setBaudrate(long baudrate, long freq_osc);
     void setFrameFormat(uart_frame_size_t bits);
     void setParity(uart_parity_t parity);
     void setStopBits(uart_stop_bits_t stop_bits);
@@ -69,7 +69,6 @@ public:
     void write(char *data, int data_size);
 
     void write(unsigned char data);
-    void write(unsigned char *string);
     void write(unsigned char *data, int data_size);
 
     void write(int data);

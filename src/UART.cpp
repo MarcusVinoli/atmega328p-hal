@@ -1,9 +1,11 @@
 //Biblioteca de Abstração de Hardware para ATmega328P - Serial Peripheral Interface MASTER
 //Author: Marcus V M Oliveira
 
+#include <avr/io.h>
 #include "../UART.h"
 #include "../DigitalInput.h"
 #include "../DigitalOutput.h"
+#include <stdio.h>
 #include <string.h>
 
 void UART::initialization(){
@@ -15,31 +17,30 @@ void UART::initialization(){
 void UART::setBaudrate(long baudrate, long freq_osc){
     if(baudrate > 0 && baudrate < DEFAULT_UART_MAX_BAUDRATE){
         long _ubrr = freq_osc/16/baudrate-1;
-        UBRR0H = (unsigned char) _ubrr;
-        UBRR0L = (unsigned char);
+        UBRR0L = (unsigned char) _ubrr;
+        UBRR0H = (unsigned char) (_ubrr>>8);
     } else {
-        setBaudrate(DEFAULT_UART_BAUDRATE);
+        setBaudrate(DEFAULT_UART_BAUDRATE, freq_osc);
     }
 }
 
 void UART::setFrameFormat(uart_frame_size_t bits){
-    switch (expression){
-    UCSRC &= ~((1<<UCSZ00)|(1<<UCSZ01));
+    switch (bits){
+    UCSR0C &= ~((1<<UCSZ00)|(1<<UCSZ01));
 
     case UART_FRAME_5_BITS:
         break;
     case UART_FRAME_6_BITS:
-        UCSRC |= (1<<UCSZ00);
+        UCSR0C |= (1<<UCSZ00);
         break;
     case UART_FRAME_7_BITS:
-        UCSRC |= (1<<UCSZ01);
+        UCSR0C |= (1<<UCSZ01);
         break;
     case UART_FRAME_8_BITS:
-        UCSRC |= (1<<UCSZ00) | (1<<UCSZ01);
+        UCSR0C |= (1<<UCSZ00) | (1<<UCSZ01);
         break;
     case UART_FRAME_9_BITS:
-        UCSRC |= (1<<UCSZ00) | (1<<UCSZ01);
-        UCSR
+        UCSR0C |= (1<<UCSZ00) | (1<<UCSZ01);
         break;
     }
 }
@@ -47,16 +48,16 @@ void UART::setFrameFormat(uart_frame_size_t bits){
 void UART::setParity(uart_parity_t parity){
     switch(parity){
         case UART_PARITY_NONE:
-            UCSR0C &= ~((1<<UMP01)|(1<<UMP00))
+            UCSR0C &= ~((1<<UPM01)|(1<<UPM00));
             break;
 
         case UART_PARITY_ODD:
-            UCSR0C |= (1<<UMP01) | (1<<UMP00);
+            UCSR0C |= (1<<UPM01) | (1<<UPM00);
             break;
             
         case UART_PARITY_EVEN:
-            UCSR0C |= (1<<UMP01);
-            UCSR0C &= ~(1<<UMP00);
+            UCSR0C |= (1<<UPM01);
+            UCSR0C &= ~(1<<UPM00);
             break;
     }
 }
@@ -74,7 +75,7 @@ void UART::setStopBits(uart_stop_bits_t stop_bits){
 }
 
 bool isBufferEmpty(){
-    return(UCSRnA & (1<<UDREn));
+    return(UCSR0A & (1<<UDRE0));
 }
 
 void waitForBufferEmpty(){
@@ -94,7 +95,7 @@ void UART::waitDataReceived(){
     while(!isDataReceived());
 }
 
-unsigned char receive(){
+unsigned char UART::receive(){
     waitDataReceived();
     return UDR0;
 }
@@ -120,13 +121,6 @@ void UART::write(unsigned char data){
    transmitt(data);
 }
 
-void UART::write(unsigned char *string){
-    int _str_length = strlen(string);
-    for(int i=0; i < _str_length; i++){
-        transmitt(string[i]);
-    }
-}
-
 void UART::write(unsigned char *data, int data_size){
     for(int i=0; i < data_size; i++){
         transmitt(data[i]);
@@ -134,7 +128,7 @@ void UART::write(unsigned char *data, int data_size){
 }
 
 void UART::write(int data){
-    unsigned char buffer[10];
+    char buffer[10];
     sprintf(buffer,"%d",data);
     write(buffer);
 }
@@ -147,8 +141,8 @@ void UART::write(int *vector, int vector_size){
 }
 
 void UART::write(float real_num){
-    unsigned char buffer[10];
-    sprintf(buffer,"%f",real_num);
+    char buffer[10];
+    sprintf(buffer,"%f",(double)real_num);
     write(buffer);
 }
 
