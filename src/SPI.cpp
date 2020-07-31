@@ -41,45 +41,45 @@ void SPI::setMode(spi_mode_t spi_mode){
 }
 
 void SPI::setSckFrequency(spi_prescale_t spi_freq){
-    SPCR &= ~((1<<SPEN) | (1<<SPR0));
+    SPCR &= ~((1<<SPIE) | (1<<SPR0));
     SPSR &= ~(1<<SPI2X);
 
     switch (spi_freq){
     case SPI_SCK_FREQ_FOSC_OVER_4:
-        SPCR = (1<<SPEN);
+        SPCR = (1<<SPIE);
         break;
 
     case SPI_SCK_FREQ_FOSC_OVER_16:
-        SPCR = (1<<SPEN) | (1<<SPR0);
+        SPCR = (1<<SPIE) | (1<<SPR0);
         break;
     
     case SPI_SCK_FREQ_FOSC_OVER_64:
-        SPCR = (1<<SPEN) | (1<<SPR1);
+        SPCR = (1<<SPIE) | (1<<SPR1);
         break;
     
     case SPI_SCK_FREQ_FOSC_OVER_128:
-        SPCR = (1<<SPEN) | (1<<SPR0) | (1<<SPR1);
+        SPCR = (1<<SPIE) | (1<<SPR0) | (1<<SPR1);
         break;
     
     case SPI_SCK_FREQ_FOSC_OVER_2:
-        SPCR = (1<<SPEN);
+        SPCR = (1<<SPIE);
         SPSR = (1<<SPI2X);
         break;
     
     case SPI_SCK_FREQ_FOSC_OVER_8:
-        SPCR = (1<<SPEN) | (1<<SPR0);
+        SPCR = (1<<SPIE) | (1<<SPR0);
         SPSR = (1<<SPI2X);
         break;
 
     case SPI_SCK_FREQ_FOSC_OVER_32:
-        SPCR = (1<<SPEN) | (1<<SPR1);
+        SPCR = (1<<SPIE) | (1<<SPR1);
         SPSR = (1<<SPI2X);
         break;
     
-    case SPI_SCK_FREQ_FOSC_OVER_64:
-        SPCR = (1<<SPEN) | (1<<SPR0) | (1<<SPR1);
-        SPSR = (1<<SPI2X);
-        break;
+//     case SPI_SCK_FREQ_FOSC_OVER_64:
+//         SPCR = (1<<SPIE) | (1<<SPR0) | (1<<SPR1);
+//         SPSR = (1<<SPI2X);
+//         break;
         
     }
 }

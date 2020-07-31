@@ -1,6 +1,6 @@
 //Libary for Hardware Abstraction for ATMEGA328P - Two-Wire Interface (I2C) as Master
 //Author: Marcus V M Oliveira
-#define __AVR_ATmega328P__
+//#define __AVR_ATmega328P__
 #include "../TWI.h"
 #include "../GPIO.h"
 #include <avr/io.h>
@@ -31,8 +31,6 @@ unsigned char TWI::repStart(){
 
 void TWI::stop(){
     TWCR = (1<<TWINT)|(1<<TWSTO)| (1<<TWEN);
-
-    return true;
 }
 
 unsigned char TWI::transmitt(unsigned char data){
